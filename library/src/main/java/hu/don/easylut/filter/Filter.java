@@ -3,10 +3,18 @@ package hu.don.easylut.filter;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-public interface Filter {
+public abstract class Filter {
 
-    Bitmap apply(Bitmap src);
+    public Bitmap apply(Bitmap src) {
+        return apply(src, null);
+    }
 
-    void apply(ImageView imageView);
+    public void apply(ImageView imageView) {
+        apply(imageView, null);
+    }
+
+    public abstract Bitmap apply(Bitmap src, BitmapStrategy.LutProgressListener listener);
+
+    public abstract void apply(ImageView imageView, BitmapStrategy.LutProgressListener listener);
 
 }

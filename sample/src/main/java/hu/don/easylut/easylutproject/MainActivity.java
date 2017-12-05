@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import hu.don.easylut.EasyLUT;
+import hu.don.easylut.filter.BitmapStrategy;
 import hu.don.easylut.filter.Filter;
 import hu.don.easylut.filter.LutFilterFromResource;
 import hu.don.easylut.lutimage.CoordinateToColor;
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements FilterAdapter.OnF
         lastFilterSelection = filterSelection;
         tvName.setVisibility(View.VISIBLE);
         tvName.setText(filterSelection == null ? "NONE" : filterSelection.name);
-        new AsyncTask<Void, Void, Bitmap>() {
+        new AsyncTask<Void, Float, Bitmap>() {
 
             long start;
 
@@ -238,7 +239,17 @@ public class MainActivity extends AppCompatActivity implements FilterAdapter.OnF
                 if (lastFilterSelection == null || filterBitmap == null) {
                     return filterBitmap;
                 }
-                return lastFilterSelection.filter.apply(filterBitmap);
+                return lastFilterSelection.filter.apply(filterBitmap, new BitmapStrategy.LutProgressListener() {
+                    @Override
+                    public void onProgress(float progress) {
+                        publishProgress(progress);
+                    }
+                });
+            }
+
+            @Override
+            protected void onProgressUpdate(Float... values) {
+                Log.d(TAG, String.format("processing %d%%...", (int)(values[0] * 100)));
             }
 
             @Override

@@ -2,27 +2,41 @@ package hu.don.easylut.filter;
 
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
-import hu.don.easylut.lutimage.LUTImage;
+public class CreatingNewBitmap extends BitmapStrategy {
 
-public class CreatingNewBitmap implements BitmapStrategy {
+    private int[] pix;
+    private int width;
+    private int height;
+
+    public void prepare(@NonNull Bitmap src) {
+        width = src.getWidth();
+        height = src.getHeight();
+        pix = new int[width * height];
+        src.getPixels(pix, 0, width, 0, 0, width, height);
+    }
+
     @Override
-    public Bitmap applyLut(Bitmap src, LUTImage lutImage) {
-        int mWidth = src.getWidth();
-        int mHeight = src.getHeight();
-        int[] pix = new int[mWidth * mHeight];
-        src.getPixels(pix, 0, mWidth, 0, 0, mWidth, mHeight);
+    protected int getPixel(@NonNull Bitmap src, int x, int y) {
+        return pix[y * width + x];
+    }
 
-        for (int y = 0; y < mHeight; y++) {
-            for (int x = 0; x < mWidth; x++) {
-                int index = y * mWidth + x;
-                int pixel = pix[index];
+    @Override
+    protected void setPixel(@NonNull Bitmap src, int x, int y, int pixel) {
+        pix[y * width + x] = pixel;
+    }
 
-                pix[index] = lutImage.getColorPixelOnLut(pixel);
-            }
-        }
-        Bitmap bm = Bitmap.createBitmap(mWidth, mHeight, src.getConfig());
-        bm.setPixels(pix, 0, mWidth, 0, 0, mWidth, mHeight);
+    @Override
+    protected Bitmap getResult(Bitmap src) {
+        // Generate the new bitmap
+        Bitmap bm = Bitmap.createBitmap(width, height, src.getConfig());
+        // Set the pixels
+        bm.setPixels(pix, 0, width, 0, 0, width, height);
+        // Clear the pixel array, we don't need it any more
+        pix = null;
+        // Return the result
         return bm;
     }
+
 }

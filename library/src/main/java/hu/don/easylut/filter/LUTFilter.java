@@ -8,7 +8,7 @@ import hu.don.easylut.lutimage.CoordinateToColor;
 import hu.don.easylut.lutimage.LUTImage;
 import hu.don.easylut.lutimage.LutAlignment;
 
-public abstract class LUTFilter implements Filter {
+public abstract class LUTFilter extends Filter {
 
     private final BitmapStrategy strategy;
     private final CoordinateToColor.Type coordinateToColorType;
@@ -23,21 +23,21 @@ public abstract class LUTFilter implements Filter {
     }
 
     @Override
-    public Bitmap apply(Bitmap src) {
+    public Bitmap apply(Bitmap src, BitmapStrategy.LutProgressListener listener) {
         Bitmap lutBitmap = getLUTBitmap();
         LUTImage lutImage = LUTImage.createLutImage(lutBitmap, coordinateToColorType, lutAlignmentMode);
-        return strategy.applyLut(src, lutImage);
+        return strategy.applyLut(src, lutImage, listener);
+    }
+
+    @Override
+    public void apply(ImageView imageView, BitmapStrategy.LutProgressListener listener) {
+        BitmapDrawable imageDrawable = (BitmapDrawable) imageView.getDrawable();
+        Bitmap source = imageDrawable.getBitmap();
+        Bitmap bitmap = apply(source, listener);
+        imageView.setImageBitmap(bitmap);
     }
 
     protected abstract Bitmap getLUTBitmap();
-
-    @Override
-    public void apply(ImageView imageView) {
-        BitmapDrawable imageDrawable = (BitmapDrawable) imageView.getDrawable();
-        Bitmap source = imageDrawable.getBitmap();
-        Bitmap bitmap = apply(source);
-        imageView.setImageBitmap(bitmap);
-    }
 
     public static abstract class Builder<B> {
         protected BitmapStrategy strategy = new CreatingNewBitmap();

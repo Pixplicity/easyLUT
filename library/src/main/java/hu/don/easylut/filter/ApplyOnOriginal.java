@@ -2,22 +2,29 @@ package hu.don.easylut.filter;
 
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
-import hu.don.easylut.lutimage.LUTImage;
+public class ApplyOnOriginal extends BitmapStrategy {
 
-public class ApplyOnOriginal implements BitmapStrategy {
 
     @Override
-    public Bitmap applyLut(Bitmap src, LUTImage lutImage) {
-        for (int y = 0; y < src.getHeight(); y++) {
-            for (int x = 0; x < src.getWidth(); x++) {
-                int pixel = src.getPixel(x, y);
-
-                int colorPixelOnLut = lutImage.getColorPixelOnLut(pixel);
-                src.setPixel(x, y, colorPixelOnLut);
-            }
-        }
-        return src;
-
+    protected void prepare(@NonNull Bitmap src) {
+        // Nothing to do
     }
+
+    @Override
+    protected int getPixel(@NonNull Bitmap src, int x, int y) {
+        return src.getPixel(x, y);
+    }
+
+    @Override
+    protected void setPixel(@NonNull Bitmap src, int x, int y, int pixel) {
+        src.setPixel(x, y, pixel);
+    }
+
+    @Override
+    protected Bitmap getResult(Bitmap src) {
+        return src;
+    }
+
 }
