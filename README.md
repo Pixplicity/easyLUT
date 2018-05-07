@@ -4,15 +4,17 @@ With easyLUT you can apply several types of color look-up table (CLUT) transform
 
 # Dependency
 
-EasyLUT is available on jCenter:
+The original version of EasyLUT is available on jCenter:
 
 `compile 'hu.don.easylut:easylut:0.4'`
+
+Beware that changes in this branch are not reflected there as the pull request has not been merged. If you wish to use this repository version, please check it out as a local dependency.
 
 # Usage
 
 This project includes a sample of the library in the `sample` module. The library itself is located in `library`.
 
-Example usage with LUT resouce id:
+Example usage with LUT resource id:
 
     Filter filter = EasyLUT.fromResourceId()
                            .withResources(resources)
