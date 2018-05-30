@@ -6,15 +6,13 @@ With easyLUT you can apply several types of color look-up table (CLUT) transform
 
 The original version of EasyLUT is available on jCenter:
 
-`compile 'hu.don.easylut:easylut:0.4'`
-
-Beware that changes in this branch are not reflected there as the pull request has not been merged. If you wish to use this repository version, please check it out as a local dependency.
+`compile 'hu.don.easylut:easylut:0.5'`
 
 # Usage
 
 This project includes a sample of the library in the `sample` module. The library itself is located in `library`.
 
-Example usage with LUT resource id:
+Example usage with resource id:
 
     Filter filter = EasyLUT.fromResourceId()
                            .withResources(resources)
@@ -22,20 +20,22 @@ Example usage with LUT resource id:
                            .createFilter();
     Bitmap filteredBitmap = filter.apply(originalBitmap);
 
-Example usage with LUT bitmap:
+Example usage with bitmap:
 
     Filter filter = EasyLUT.fromBitmap()
                            .withBitmap(lutBitmap) //lutBitmap is created by you before
                            .createFilter()
     Bitmap filteredBitmap = filter.apply(originalBitmap);
 
+**Important**: Put your LUT images into the drawable-nodpi folder, so they won't get resized by the system.
+
 When calling with resources it won't load the bitmap into memory until using the bitmap, and the LUT's bitmap won't stay in memory after usage. However it will reload the bitmap every time you use the LUT filter.
 
 When calling with bitmap, the LUTFilter object will have a reference to the bitmap object, but it won't load the bitmap every time you use it.
 
-It's highly recommended to explicity specify the color axes using `withColorAxes()` to unexpected results. CLUTs are typically `CoordinateToColor.Type.RGB_TO_XYZ`.
+It's highly recommended to explicitly specify the color axes using `withColorAxes()` to avoid unexpected results. CLUTs are typically `CoordinateToColor.Type.RGB_TO_XYZ`.
 
-Full usage:
+Full usage with resource id:
 
     EasyLUT.fromResourceId()
            .withResources(resources)
@@ -83,3 +83,9 @@ Compatibility tested for the following LUT image types:
 The RGB dimensions are now guessed by the library, assuming that the RGB dimensions correspond with the LUT cube's XYZ axes such that the maximum value exists in the farthest coordinate.
 
 If you come across any other LUT types which is not handled well by the library please create a ticket.
+
+## Future improvement possibilities
+
+ - Direct usage with ImageView. Problem can be that the original bitmap will be lost after applying filter.
+ - Enable a load from file and save to file option.
+ - Processing large images without having OutOfMemoryError.
